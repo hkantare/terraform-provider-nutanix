@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -74,6 +75,8 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		return nil, errp
 	}
 
+	log.Println("**URL", rel)
+
 	u := c.BaseURL.ResolveReference(rel)
 
 	buf := new(bytes.Buffer)
@@ -136,6 +139,8 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) error
 		}
 	}()
 
+	log.Println("**Response:", resp)
+
 	err = CheckResponse(resp)
 
 	if err != nil {
@@ -168,12 +173,16 @@ func CheckResponse(r *http.Response) error {
 
 	data, err := ioutil.ReadAll(r.Body)
 
+	log.Println("**Data", data)
+
 	if err != nil {
 		return err
 	}
 
 	res := &ErrorResponse{}
+	log.Println("**unmarshall1")
 	err = json.Unmarshal(data, res)
+	log.Println("***unmarshall2")
 	if err != nil {
 		return err
 	}

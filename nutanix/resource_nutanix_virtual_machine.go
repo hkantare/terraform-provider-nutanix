@@ -29,8 +29,13 @@ func resourceNutanixVirtualMachine() *schema.Resource {
 }
 
 func resourceNutanixVirtualMachineCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Println("**CREATE VM1")
+
 	// Get client connection
 	conn := meta.(*NutanixClient).API
+
+	log.Println("**connection")
+	log.Println(conn.V3)
 
 	// Prepare request
 	request := &v3.VMIntentInput{}
@@ -88,13 +93,19 @@ func resourceNutanixVirtualMachineCreate(d *schema.ResourceData, meta interface{
 	request.Metadata = metadata
 	request.Spec = spec
 
+	log.Println("**CREATE VM2")
+
 	utils.PrintToJSON(request, "REQUEST VM")
+
+	log.Println("**CREATE VM3")
 
 	// Make request to the API
 	resp, err := conn.V3.CreateVM(request)
 	if err != nil {
 		return err
 	}
+
+	log.Println("**CREATE VM4")
 
 	uuid := *resp.Metadata.UUID
 
